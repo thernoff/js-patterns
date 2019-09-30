@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>JSON</title>
+  </head>
+  <body>
+    <script>
+      // Пример строки в формате JSON: {"name": "value", "some": [1, 2, 3]}
+
+      // Обработка данных в формате JSON
+      // входная строка в формате JSON
+      var jstr = '{"mykey": "my value"}';
+
+      // антишаблон
+      var data1 = eval("(" + jstr + ")");
+
+      // предпочтительный способ
+      var data2 = JSON.parse(jstr);
+
+      console.log(data1.mykey); // my value
+      console.log(data2.mykey); // my value
+
+      // Метод JSON.stringify() выполняет операцию, противоположную методу
+      // JSON.parse(). Он принимает произвольный объект или массив (или значение
+      // простого типа) и преобразует его в строку JSON.
+      var dog = {
+        name: "Fido",
+        dob: new Date(),
+        legs: [1, 2, 3, 4]
+      };
+
+      var jsonDog = JSON.stringify(dog);
+      console.log(jsonDog); // {"name":"Fido","dob":"2019-09-10T02:32:02.132Z","legs":[1,2,3,4]}
+    </script>
+  </body>
+</html>

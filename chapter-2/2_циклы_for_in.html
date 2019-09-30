@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Циклы for-in</title>
+  </head>
+  <body>
+    <script>
+      // Циклы for-in
+      // При обходе в цикле свойств объекта важно использовать метод hasOwnProperty(), чтобы отфильтровать свойства,
+      // которые были унаследованы от прототипа.
+      var man = {
+        hands: 2,
+        legs: 2,
+        heads: 1
+      };
+
+      // где-то далее в сценарии ко всем объектам добавляется дополнительный метод
+      if (typeof Object.prototype.clone === "undefined") {
+        Object.prototype.clone = function() {
+          console.log("clone");
+        };
+      }
+
+      // 1. цикл for-in с использованием метода hasOwnProperty()
+      for (var i in man) {
+        if (man.hasOwnProperty(i)) {
+          console.log(i, ": ", man[i]);
+        }
+      }
+
+      // 2. Антишаблон
+      // цикл for-in без проверки с помощью метода hasOwnProperty()
+      for (var i in man) {
+        console.log(i, ": ", man[i]); // в этом случае, помимо собственных свойств, будет выведен и метод clone()
+      }
+
+      // 3. Еще один вариант использования метода hasOwnProperty()
+      // Преимущество этого способа состоит в том, что он позволяет избежать конфликтов имен
+      // в случае, если объект man переопределит метод hasOwnProperty.
+      for (var i in man) {
+        if (Object.prototype.hasOwnProperty.call(man, i)) {
+          console.log(i, ": ", man[i]);
+        }
+      }
+
+      // Кроме того, можно предотвратить поиск метода в длинном списке свойств объекта Object,
+      // сохранив ссылку на него в локальной переменной
+      var j,
+        hasOwn = Object.prototype.hasOwnProperty;
+      for (j in man) {
+        if (hasOwn.call(man, j)) {
+          console.log(j, ": ", man[j]);
+        }
+      }
+    </script>
+  </body>
+</html>

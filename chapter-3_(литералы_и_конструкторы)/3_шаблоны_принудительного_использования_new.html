@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Шаблоны принудительного использования new</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * Шаблоны принудительного использования new
+       * Если забыть добавить оператор new при вызове конструктора, то это может привести
+       * к логической ошибке и неожиданным результатам: ссылка this внутри конструктора будет
+       * указывать на объект window.
+       * Если в конструкторе создается какое-либо новое свойство, такое как this.member,
+       * то при вызове конструктора без оператора new будет создано новое свойство member
+       * глобального объекта, к которому можно будет обратиться так: window.member или просто member.
+       * ! Такое поведение устранено в стандарте ES5 и в строгом режиме ссылка this больше не указывает
+       * на глобальный объект.
+       */
+
+      // Конструктор
+      function Waffle() {
+        this.tastes = "yummy";
+      }
+      // Новый объект
+      var good_morning = new Waffle();
+      console.log(typeof good_morning); // object
+      console.log(good_morning.tastes); // yummy
+      // Антишаблон
+      var good_night = Waffle();
+      console.log(typeof good_night); // undefined
+      console.log(window.tastes); // yummy
+
+      // Для того, чтобы функция-конструктор всегда действовала как конструктор, даже
+      // при вызове без оператора new.
+
+      // 1 способ: Использование ссылки that: вместо this испльзовать другой объект и возвращать его
+      // НО будет утрачена связь с прототипом.
+      function Foo() {
+        var that = {};
+        that.tastes = "yumme";
+        return that;
+      }
+      var firstFoo = new Foo(),
+        secondFoo = Foo();
+      console.log(typeof firstFoo); // object
+      console.log(firstFoo.tastes); // yummy
+      console.log(typeof secondFoo); // object
+      console.log(secondFoo.tastes); // yummy
+
+      // 2 способ: Конструкторы, вызывающие сами себя
+      // В конструкторе можно проверить, является ли ссылка this экземпляром конструктора,
+      // и если не является, вызвать конструктор еще раза, но уже с оператором new:
+      function Bar() {
+        if (!(this instanceof Bar)) {
+          return new Bar();
+        }
+
+        this.tastes = "yummy";
+      }
+      Bar.prototype.wantAnother = true;
+      // Проверка вызовов
+      var firstBar = new Bar(),
+        secondBar = Bar();
+      console.log(firstBar.tastes); // yummy
+      console.log(secondBar.tastes); // yummy
+      console.log(firstBar.wantAnother); // true
+      console.log(secondBar.wantAnother); // true
+
+      // Другой распространенный способ проверки экземпляра состоит в том, чтобы сравнить
+      // не с конкретным именем конструктора, а со свойством arguments.callee.
+      // Внутри каждой функции создается объект с именем arguments, содержащий все параметры,
+      // переданные функции при вызове. А arguments.callee ссылается на вызываемую функцию.
+      /*
+        if (!(this instanceof arguments.callee)) {
+          return new arguments.callee();
+        }
+      */
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Немедленная инициализация объектов
+
+        Данный шаблон опирается на использование объектов, обладающих методом init(), который вызывается сразу после создания объекта.
+        Также он в основном используется для однократного выполнения операций и не обеспечивает возможность доступа к объекту 
+        после завершения выполнения метода init().
+      */
+      ({
+        // здесь можно определить параметры настройки или конфигурационные константы
+        maxwidht: 600,
+        maxheight: 400,
+        // также можно определять вспомогательные методы
+        gimmeMax: function() {
+          return this.maxwidht + "x" + this.maxheight;
+        },
+        // инициализация
+        init: function() {
+          console.log("init");
+          console.log(this.gimmeMax());
+          // операции по инициализации...
+        }
+      }.init());
+    </script>
+  </body>
+</html>

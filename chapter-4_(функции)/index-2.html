@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Как известно, объявление всех переменных, независимо в каком месте внутри функции они находятся, на этапе интерпретации
+        как бы "поднимаются" в начало функции. То же относится и к функциям, потому что фактически они являются объектами,
+        которые присваиваются переменным. Но "фишка" в том, что для функций-объявлений вместе с именем функции "поднимается"
+        и ее определение, а не только имя.
+      */
+
+      // антишаблон
+      // глобальные функции
+      function foo() {
+        console.log("global foo");
+      }
+
+      function bar() {
+        console.log("global bar");
+      }
+
+      function hoistMe() {
+        console.log(typeof foo); // function
+        console.log(typeof bar); // undefined
+
+        foo(); // local foo
+        bar(); // Uncaught TypeError: bar is not a function
+
+        // функция-объявление:
+        // имя 'foo' и его определение "поднимаются" вместе
+        function foo() {
+          console.log("local foo");
+        }
+
+        // функция-выражение:
+        // "поднимается" только имя 'bar', без реализации
+        var bar = function() {
+          console.log("local bar");
+        };
+      }
+
+      hoistMe();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Свойства функций - шаблон мемоизации
+        Если функция в качестве параметра принимает строку
+      */
+      var myFunc = function(param) {
+        if (!myFunc.cache[param]) {
+          var result = {};
+          // ... продолжительные операции ...
+          myFunc.cache[param] = result;
+        }
+
+        return myFunc.cache[param];
+      };
+
+      // Создание хранилища результатов
+      myFunc.cache = {};
+
+      /* Если функция в качестве параметра принимает большее число параметров, имеющих более сложные типы,
+        то в качестве универсального решения можно их сериализовать.
+        Но если имеется два различных объекта, которые по случайности обладают одними и теми же свойствами,
+        обоим этим объектам в кэше будет соответствовать одна и та же запись.
+      */
+      myFunc2 = function() {
+        var cachekey = JSON.stringify(Array.prototype.slice.call(arguments)),
+          result;
+
+        if (!myFunc.cache[cachekey]) {
+          var result = {};
+          // ... продолжительные операции ...
+          myFunc.cache[cachekey] = result;
+        }
+
+        return myFunc.cache[cachekey];
+      };
+
+      // Создание хранилища результатов
+      myFunc2.cache = {};
+    </script>
+  </body>
+</html>

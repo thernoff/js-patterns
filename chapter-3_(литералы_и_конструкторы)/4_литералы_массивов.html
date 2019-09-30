@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Литералы массивов</title>
+  </head>
+  <body>
+    <script>
+      // Массив из трех элементов
+      // внимание: антишаблон
+      var a = new Array("itsy", "bitsy", "spider");
+      // точно такой же массив
+      var b = ["itsy", "bitsy", "spider"];
+
+      console.log(typeof a); // object
+      console.log(typeof b); // object
+
+      console.log(a.constructor === Array); // true
+      console.log(b.constructor === Array); // true
+
+      // Странности конструктора Array
+      // Когда конструктору Array() передается единственное число, оно не становится
+      // первым элементом массива. Вместо этого число интерпретируется как размер массива.
+
+      // Если передать конструктору число с плавающей точкой, то произойдет ошибка.
+      // var c = new Array(3.14); // Uncaught RangeError: Invalid array length
+
+      // Проверка массивов
+      // В ES5 определяется новый метод Array.isArray(), который возвращает true,
+      // если его аргумент является массивом.
+      console.log(Array.isArray([])); // true
+      // Попытка обмануть проверку с помощью объекта, похожего на массив
+      var isArray = Array.isArray({
+        length: 1,
+        "0": 1,
+        slice: function() {}
+      });
+      console.log(isArray); // false
+
+      // Если метод isArray недоступен, то можно выполнить проверку с помощью
+      // метода Object.prototype.toString()
+      console.log(Object.prototype.toString.call([])); // [object Array]
+      // или
+      if (typeof Array.isArray === "undefined") {
+        Array.isArray = function(arg) {
+          return Object.prototype.toString.call(arg) === "[object Array]";
+        };
+      }
+    </script>
+  </body>
+</html>

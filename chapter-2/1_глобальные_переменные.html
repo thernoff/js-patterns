@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Побочные эффекты, возникающие в отсутствие объявления var
+      /*
+        Глобальные переменные, созданные явно с помощью инструкции var (в программе, за пределами какой-либо функции), не могут быть удалены.
+        Подразумеваемые переменные, созданные без помощи инструкции var (независимо от того, были они созданы в пределах функции или нет),
+        могут быть удалены.
+      */
+      var global_var = 1;
+      global_novar = 2;
+      (function() {
+        global_fromfunc = 3;
+      })();
+
+      //
+      delete global_var;
+      delete global_novar;
+      delete global_fromfunc;
+
+      // Проверка удаления
+      console.log(typeof global_var); // number
+      console.log(typeof global_novar); // undefined
+      console.log(typeof global_fromfunc); // undefined
+
+      // Доступ к глобальному объекту
+      /*
+        Получение глобального объекта (внутри функций, которые вызываются как функции, а не как конструкторы с оператором new, ссылка this
+        всегда указывает на глобальный объект). Но данный прием не может использоваться в строгом режиме.
+      */
+      var global = (function() {
+        return this;
+      })();
+      console.log(global);
+
+      // Подъем: проблемы с разбросанными переменными
+      // антишаблон
+      myname = "global"; // глобальная переменная
+      function func() {
+        console.log(myname); // undefined
+        var myname = "local";
+        console.log(myname); // local
+      }
+      func();
+    </script>
+  </body>
+</html>

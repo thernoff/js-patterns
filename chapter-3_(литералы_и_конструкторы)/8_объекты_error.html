@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Объекты Error</title>
+  </head>
+  <body>
+    <script>
+      // В JavaScript имеется множество встроенных конструкторов объектов ошибок, таких как Error(), SyntaxError(), TypeError() и других,
+      // которые используются в инструкции throw.
+      // Инструкция throw способна принимать любые объекты, не обязательно созданные с помощью какого-либо из конструкторов семейства Error.
+
+      try {
+        // произошло что-то неприятное, возбудеть ошибку
+        throw {
+          name: "MyErrorType", // нестандартный тип ошибки
+          message: "oops",
+          extra: "This was rather embarrassing",
+          remedy: genericErrorHandler // какой обработчик должен обрабатывать ошибку
+        };
+      } catch (e) {
+        // известить пользователя
+        console.log(e.message);
+
+        // обработать ошибку
+        e.remedy(); // вызовет genericErrorHandler()
+      }
+
+      // Если конструкторы объектов ошибок вызываются как обычные функции (без оператора new), они ведут себя точно так же, как конструкторы
+      // (при вызове с оператором new), и возвращают те же объекты ошибок.
+    </script>
+  </body>
+</html>

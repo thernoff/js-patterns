@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Каррирование
+        Каррированная функция add() принимает неполный список аргументов
+      */
+      function add(x, y) {
+        var oldx = x,
+          oldy = y;
+        if (typeof oldy === "undefined") {
+          // частичное применение
+          return function(newy) {
+            return oldx + newy;
+          };
+        }
+
+        // полное применение
+        return x + y;
+      }
+
+      // проверка
+      typeof add(5); // function
+      console.log(add(3)(4)); // 7
+
+      // создать и сохранить новую функцию
+      var add2000 = add(2000);
+      console.log(add2000(19));
+
+      // Такая реализация функции add() несколько избыточна, и сделано это исключительно в демонстрационных целях.
+      function addNew(x, y) {
+        if (typeof y === "undefined") {
+          return function(y) {
+            return x + y; // x неявно сохраняется в замыкании
+          };
+        }
+
+        // полное применение
+        return x + y;
+      }
+
+      /* 
+        Реализация обработки ситуации частичного применения находится в самой функции add().
+        Но существует ли более универсальный способ?
+        Рассмотрим функцию, выполняющую каррирование.
+      */
+      function schonfinkelize(fn) {
+        var slice = Array.prototype.slice,
+          stored_args = slice.call(arguments, 1); // сохраняем переданные аргументы (исключая первый)
+
+        return function() {
+          var new_args = slice.call(arguments),
+            args = stored_args.concat(new_args);
+
+          return fn.apply(null, args);
+        };
+      }
+    </script>
+  </body>
+</html>

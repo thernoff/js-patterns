@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Eval</title>
+  </head>
+  <body>
+    <script>
+      /**
+       *  eval() принимает произвольную строку и выполняет ее как программный код на JavaScript
+       * Данную функцию лучше не использовать либо заменить например вызовом конструктора new Function().
+       * Такой прием имеет небольшое преимущество, т.к. оцениваемый программный код, переданный в вызов new Function(),
+       * выполняется в локальной области видимости функции, поэтому все переменные, объявленные в этом коде
+       * с помощью инструкции var, не станут автоматически глобальныме.
+       * Либо обернуть вызов eval() немедленно вызываемой функцией.
+       */
+
+      console.log(typeof un); // undefined
+      console.log(typeof deux); // undefined
+      console.log(typeof trois); // undefined
+
+      var jsstring = "var un = 1; console.log(un);";
+      eval(jsstring);
+
+      jsstring = "var deux = 2; console.log(deux);";
+      new Function(jsstring)();
+
+      jsstring = "var trois = 3; console.log(trois);";
+      (function() {
+        eval(jsstring);
+      })();
+
+      console.log(typeof un); // "number"
+      console.log(typeof deux); // undefined
+      console.log(typeof trois); // undefined
+
+      // Еще один пример замены eval на new Function() (можно испльзовать просто Function())
+      (function() {
+        var local = 1;
+        eval("local = 3; console.log(local);"); // 3
+        console.log(local); // 3
+      })();
+
+      (function() {
+        var local = 2;
+        //Function("console.log(typeof local);")(); // undefined
+
+        Function("local = 4; console.log(local);")(); // 4
+        console.log(local); // 2
+      })();
+
+      console.log(local); // 4
+    </script>
+  </body>
+</html>

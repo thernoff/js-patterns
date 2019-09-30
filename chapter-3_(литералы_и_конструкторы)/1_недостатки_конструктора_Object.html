@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Недостатки конструктора Object</title>
+  </head>
+  <body>
+    <script>
+      // Внимание: все эти примеры являются антишаблонами
+      // пустой объект
+      var o1 = new Object();
+      console.log(o1.constructor === Object); // true
+
+      // объект-число
+      var o2 = new Object(1);
+      console.log(o2.constructor === Number); // true
+      console.log(o2.toFixed(2)); // "1.00"
+
+      // объект-строка
+      var o3 = new Object("I am a string");
+      console.log(o3.constructor === String); // true
+
+      // обычные объекты не имеют метода substring()
+      // зато этот метод имеется у объектов-строк
+      console.log(typeof o3.substring); // function
+
+      // логический объект
+      var o4 = new Object(true);
+      console.log(o4.constructor === Boolean); // true
+
+      // ! Такое поведение конструктора Object() может приводить к неожиданным результатам,
+      // когда значение, передаваемое ему, генерируется динамически и тип его заранее неизвестен.
+    </script>
+  </body>
+</html>

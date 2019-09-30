@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Функции обратного вызова
+      */
+      var findNodes = function(callback) {
+        var i = 100000,
+          nodes = [],
+          found;
+
+        if (typeof callback !== "function") {
+          callback = false;
+        }
+
+        while (i) {
+          i -= 1;
+          // здесь находится сложная логика выбора узлов...
+
+          if (callback) {
+            callback(found);
+          }
+
+          nodes.push(found);
+        }
+
+        return nodes;
+      };
+
+      var hide = function(node) {
+        node.style.display = "none";
+      };
+
+      // отыскать узлы и скрыть их
+      findNodes(hide);
+    </script>
+  </body>
+</html>

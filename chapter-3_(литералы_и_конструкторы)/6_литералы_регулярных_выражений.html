@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Литералы регулярных выражений</title>
+  </head>
+  <body>
+    <script>
+      // Регулярные выражения в JavaScript также являются объектами,
+      // и у нас есть два способа их создание:
+      // - с помощью конструктора new RegExp()
+      // - с помощью литералов регулярных выражений
+
+      // литерал регулярного выражения
+      var re1 = /\\/gm;
+
+      // конструктор
+      var re2 = new RegExp("\\\\", "gm");
+
+      // При использовании конструктора придется экранировать кавычки и дважды
+      // экранировать символы обратного слэша.
+
+      // Синтаксис литералов регулярных выражений
+      // Модификаторы
+      // g - глобальный поиск
+      // m - поиск в многострочном тексте
+      // i - поиск без учета регистра символов
+
+      var no_letters = "abc123XYZ".replace(/[a-z]/gi, "");
+      console.log(no_letters);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Объекты-обертки значений простых типов</title>
+  </head>
+  <body>
+    <script>
+      // В языке JavaScript имеется пять простых типов данных: число, строка, логическое значение, null и undefined.
+      // За исключением null и undefined, для остальных трех типов существуют так называемые объекты-обертки.
+      // Объекты-обертки могут быть созданы с помощью встроенных конструкторов Number(), String() и Boolean().
+
+      // простое число
+      var n = 100;
+      console.log(typeof n); // number
+
+      var objN = new Number(100);
+      console.log(typeof objN); // object
+
+      // Объекты-обертки обладают рядом интересных свойств и методов, например, объекты-числа обладают такими методами, как toFixed() и to­Exponential().
+      // Объекты-строки обладают методами substring(), charAt() и toLowerCase() (помимо других) и свойством length.
+      // Однако методы могут применяться и к элементарным значениям – при вызове метода элементарное значение
+      // временно преобразуется в объект и ведет себя как объект.
+
+      // элементарная строка, используемая как объект
+      var s = "hello";
+      console.log(s.toUpperCase()); // HELLO
+
+      // даже само значение может действовать как объект
+      console.log("monkey".slice(3, 6)); // key
+
+      // то же самое относится к числам
+      console.log((22 / 7).toPrecision(3)); // 3.14
+
+      // Объекты-обертки можно использовать, когда необходимо добавить к значению дополнительные свойства и обеспечить сохранение
+      // информации о состоянии. Поскольку элементарные значения не являются объектами, к ним невозможно добавить дополнительные свойства.
+
+      // элементарная строка
+      var greet = "Hello there";
+
+      // значение будет временно преобразовано в объект, чтобы предоставить возможность вызвать метод split()
+      console.log(greet.split(" ")[0]); // Hello
+
+      // попытка добавить свойство к элементарному значение не вызовет ошибку
+      greet.smile = true;
+
+      // но она не даст положительных результатов
+      console.log(typeof greet.smile); // undefined
+
+      // При вызове конструкторов объектов-оберток без оператора new они преобразуют свои аргументы в элементарные значения:
+      console.log(typeof Number(1)); // number
+      console.log(typeof Number("1")); // number
+      console.log(typeof Number(new Number())); // number
+      console.log(typeof String(1)); // string
+      console.log(typeof Boolean(1)); // boolean
+    </script>
+  </body>
+</html>

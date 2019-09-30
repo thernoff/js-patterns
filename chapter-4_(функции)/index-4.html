@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Функции</title>
+  </head>
+  <body>
+    <script>
+      /*
+        Немедленно вызываемые функции
+      */
+      // Переменные days, today и msg без немедленно вызываемой функции
+      // стали бы глобальными
+      (function() {
+        var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          today = new Date(),
+          msg = "Today is " + days[today.getDay()] + ", " + today.getDate();
+
+        console.log(msg);
+      })();
+
+      /*
+        Параметры немедленно вызываемых функций
+      */
+      (function(who, when) {
+        console.log("I met " + who + " on " + when);
+      })("Joe Black", new Date());
+
+      /*
+        Обычно немедленно вызываемым функциям в качестве аргумента передается глобальный объект, чтобы к нему можно было обращаться без использования свойства window; 
+        это позволяет использовать программный код в средах, отличных от браузеров:
+      */
+      (function(global) {
+        // глобальный объект доступен через аргумент 'global'
+      })(this);
+
+      /*
+        Значения, возвращаемые немедленно вызываемыми функциями
+      */
+      var result = (function() {
+        return 2 + 2;
+      })();
+      console.log("result = ", result);
+
+      var getResult = (function() {
+        var res = 2 + 2;
+        return function() {
+          return res;
+        };
+      })();
+
+      var result2 = getResult();
+      console.log("result2 = ", result2);
+
+      /*
+        Немедленно вызываемые функции могут использоваться при определении свойств объекта.
+      */
+      var o = {
+        message: (function() {
+          var who = "me",
+            what = "call";
+          return what + " " + who;
+        })(),
+        getMsg: function() {
+          return this.message;
+        }
+      };
+
+      console.log("o.message = ", o.message); // call me
+      console.log("o.getMsg() = ", o.getMsg()); // call me
+    </script>
+  </body>
+</html>
