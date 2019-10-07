@@ -1,67 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Функции</title>
-  </head>
-  <body>
-    <script>
-      /*
-        Каррирование
-        Каррированная функция add() принимает неполный список аргументов
-      */
-      function add(x, y) {
-        var oldx = x,
-          oldy = y;
-        if (typeof oldy === "undefined") {
-          // частичное применение
-          return function(newy) {
-            return oldx + newy;
-          };
-        }
 
-        // полное применение
-        return x + y;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Функции</title>
+</head>
 
-      // проверка
-      typeof add(5); // function
-      console.log(add(3)(4)); // 7
-
-      // создать и сохранить новую функцию
-      var add2000 = add(2000);
-      console.log(add2000(19));
-
-      // Такая реализация функции add() несколько избыточна, и сделано это исключительно в демонстрационных целях.
-      function addNew(x, y) {
-        if (typeof y === "undefined") {
-          return function(y) {
-            return x + y; // x неявно сохраняется в замыкании
-          };
-        }
-
-        // полное применение
-        return x + y;
-      }
-
-      /* 
-        Реализация обработки ситуации частичного применения находится в самой функции add().
-        Но существует ли более универсальный способ?
-        Рассмотрим функцию, выполняющую каррирование.
-      */
-      function schonfinkelize(fn) {
-        var slice = Array.prototype.slice,
-          stored_args = slice.call(arguments, 1); // сохраняем переданные аргументы (исключая первый)
-
-        return function() {
-          var new_args = slice.call(arguments),
-            args = stored_args.concat(new_args);
-
-          return fn.apply(null, args);
+<body>
+  <script>
+    /*
+      Каррирование
+      Каррированная функция add() принимает неполный список аргументов
+    */
+    function add(x, y) {
+      var oldx = x,
+        oldy = y;
+      if (typeof oldy === "undefined") {
+        // частичное применение
+        return function (newy) {
+          return oldx + newy;
         };
       }
-    </script>
-  </body>
+
+      // полное применение
+      return x + y;
+    }
+
+    // проверка
+    typeof add(5); // function
+    console.log(add(3)(4)); // 7
+
+    // создать и сохранить новую функцию
+    var add2000 = add(2000);
+    console.log(add2000(19));
+
+    // Такая реализация функции add() несколько избыточна, и сделано это исключительно в демонстрационных целях.
+    // Более компактная версия показана в следующем фрагменте - в ней отсутсвуют переменные oldx и oldy, потому что
+    // оригинальный аргумент x неявно сохраняется в замыкании, а вместо newy используется y.
+    function addNew(x, y) {
+      if (typeof y === "undefined") {
+        return function (y) {
+          return x + y; // x неявно сохраняется в замыкании
+        };
+      }
+
+      // полное применение
+      return x + y;
+    }
+
+    /*
+      Реализация обработки ситуации частичного применения находится в самой функции add().
+      Но существует ли более универсальный способ?
+      Рассмотрим функцию, выполняющую каррирование.
+    */
+    function schonfinkelize(fn) {
+      var slice = Array.prototype.slice,
+        stored_args = slice.call(arguments, 1); // сохраняем переданные аргументы (исключая первый)
+      console.log('stored_args', stored_args); // [4]
+      return function () {
+        var new_args = slice.call(arguments),
+          args = stored_args.concat(new_args);
+        console.log('new_args', new_args); // [5]
+        console.log('args', args); // [4, 5]
+        return fn.apply(null, args);
+      };
+    }
+
+    function multiply(x, y) {
+      return x * y;
+    }
+
+    // каррировать существующую функцию и получить новую
+    var newMultiply = schonfinkelize(multiply, 4);
+    var res = newMultiply(5);
+    console.log(res);
+
+    function sum(a, b, c, d, e) {
+      return a + b + c + d + e;
+    }
+
+    var sum1 = schonfinkelize(sum, 1, 2, 3)(5, 5);
+    console.log(sum1);
+
+    var addOne = schonfinkelize(sum, 1);
+    var sum2 = addOne(10, 10, 10, 10);
+    console.log(sum2);
+  </script>
+</body>
+
 </html>
