@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+  <script>
+    // Частные члены и литералы объектов
+    /*
+      Если объект определяется в виде литерала, то можно ли создавать частные члены?
+    */
+    var myobj; // это будет объект
+    (function () {
+      // частные члены
+      var name = "my, oh my";
+
+      // реализация общедоступных членов
+      // обратите внимание на отсутствие инструкции 'var'
+      myobj = {
+        // привелигированный метод
+        getName: function () {
+          return name;
+        }
+      };
+    })();
+
+    var name = myobj.getName();
+    console.log(name); // my, oh my
+    // либо
+    var myobj2 = (function () {
+      // частные члены
+      var name = "my, oh my";
+
+      // реализация общедоступных членов
+      return {
+        getName: function () {
+          return name;
+        }
+      }
+    }());
+    console.log(myobj2.getName());
+  </script>
+</body>
+
+</html>
