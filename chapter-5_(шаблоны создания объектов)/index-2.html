@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Шаблоны создания объектов</title>
+  </head>
+  <body>
+    <script>
+      // Частные свойства и методы
+      /* 
+        Несмотря на отсутствие в языке специальных средств определения частных членов,
+        их все-таки можно создать, используя для этого замыкания.
+        Функция-конструктор может образовывать замыкание, и любые переменные, ставшие частью этого
+        замыкания, не будут доступны за пределами этого объекта. Однако такие частные члены остануться
+        доступными для общедоступных методов - методов, определяемых внутри конструктора и являющихся частью
+        интерфейса возвращаемого объекта.
+      */
+      function Gadget() {
+        // частный член
+        var name = "iPod";
+        // общедоступная функция
+        this.getName = function() {
+          return name;
+        };
+      }
+
+      var toy = new Gadget();
+      // имя 'name' не определено, частный член
+      console.log(toy.name); // undefined
+      // общедоступный метод может обратиться к частному члену 'name'
+      console.log(toy.getName()); // iPod
+
+      // Нежелательный доступ к частным членам
+      /*
+        Если привелигированный метод (метод, обладающий доступом к частным членам)
+        возращает частную переменную непосредственно и эта переменная является
+        объектом или массивом, внешний программный код сможет изменить такую частную
+        переменную, потому что объекты и массивы передаются по ссылке.
+
+        Рм. данный момент подробнее
+      */
+      function Gadget2() {
+        // частный член
+        var specs = {
+          screen_width: 320,
+          screen_height: 480,
+          color: "white"
+        };
+
+        // общедоступная функция
+        this.getSpecs = function() {
+          return specs;
+        };
+      }
+
+      var toy2 = new Gadget2(),
+        specs = toy2.getSpecs();
+      console.log("specs", specs); // {screen_width: 320, screen_height: 480, color: "white"}
+      specs.color = "black";
+      specs.price = "free";
+      console.log("toy2.getSpecs()", toy2.getSpecs()); // {screen_width: 320, screen_height: 480, color: "black", price: "free"}
+
+      // Чтобы избежать изменения частного члена,
+      // 1 способ: можно возращать только часть объекта или массива
+      function Gadget3() {
+        // частный член
+        var specs = {
+          screen_width: 320,
+          screen_height: 480,
+          color: "white"
+        };
+
+        // общедоступная функция
+        this.getDimensions = function() {
+          return Object.assign(
+            {},
+            {
+              screen_width: specs.screen_width,
+              screen_height: specs.screen_height
+            }
+          );
+        };
+      }
+      var toy3 = new Gadget3(),
+        dimensions = toy3.getDimensions();
+      console.log("dimensions", dimensions);
+      dimensions.screen_width = 640;
+      dimensions.price = "free";
+      console.log("toy3.getDimensions()", toy3.getDimensions());
+    </script>
+  </body>
+</html>

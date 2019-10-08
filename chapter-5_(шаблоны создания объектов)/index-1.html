@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Шаблоны создания объектов</title>
+  </head>
+  <body>
+    <script>
+      // Универсальная функция для создания пространства имен
+      var MYAPP = MYAPP || {};
+
+      MYAPP.namespace = function(ns_string) {
+        var parts = ns_string.split("."),
+          parent = MYAPP,
+          i;
+
+        // отбросить начальный префикс - имя глобального объекта
+        if (parts[0] === "MYAPP") {
+          parts = parts.slice(1);
+        }
+
+        for (i = 0; i < parts.length; i++) {
+          // создать свойсво если оно отсутствует
+          if (typeof parent[parts[i]] === "undefined") {
+            parent[parts[i]] = {};
+          }
+
+          parent = parent[parts[i]];
+        }
+
+        return parent;
+      };
+
+      var module2 = MYAPP.namespace("MYAPP.modules.module2");
+      console.log(module2);
+      console.log(MYAPP);
+      console.log(module2 === MYAPP.modules.module2);
+
+      // опускать начальный префикс 'MYAPP'
+      MYAPP.namespace("modules.module51");
+      console.log(MYAPP);
+
+      // создавать глубоко вложенные пространства имен
+      MYAPP.namespace("once.upon.a.time.there.was.this.long.nested.property");
+      console.log(MYAPP);
+    </script>
+  </body>
+</html>
