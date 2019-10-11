@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Шаблоны создания объектов</title>
+  </head>
+  <body>
+    <script>
+      /*
+      Частные члены и прототипы
+      Чтобы сэкономить свои усилия и память, общие для всех экземпляров свойства и методы можно добавить
+      в свойство prototype конструктора.
+    */
+      function Gadget() {
+        // частный член
+        var name = "iPod";
+
+        // общедоступная функция
+        this.getName = function() {
+          return name;
+        };
+      }
+
+      Gadget.prototype = (function() {
+        // частный член
+        var browser = "Mobile Webkit";
+
+        // общедоступные члены прототипа
+        return {
+          getBrowser: function() {
+            return browser;
+          }
+        };
+      })();
+
+      var toy = new Gadget();
+      console.log("toy.name", toy.name); // undefined
+      console.log("toy.getName()", toy.getName()); // iPod
+      console.log("toy.browser", toy.browser); // undefined
+      console.log("toy.getBrowser()", toy.getBrowser()); // Mobile Webkit
+    </script>
+  </body>
+</html>
