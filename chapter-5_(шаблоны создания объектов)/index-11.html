@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			Общедоступные статические члены
+		*/
+		// конструктор
+		var Gadget = function () { }
+
+		// статический метод
+		Gadget.isShiny = function () {
+			return "you bet";
+		}
+
+		// обычный метод, добавляемый в прототип
+		Gadget.prototype.setPrice = function (price) {
+			this.price = price;
+		}
+
+		// вызов статического метода
+		// !!! this внутри isShiny будет указывать на функцию-конструктор
+		console.log(Gadget.isShiny()); // you bet
+
+		// создать экземпляр и вызвать обычный метод
+		var iphone = new Gadget();
+		iphone.setPrice(500);
+		console.log(iphone.price); // 500
+
+		console.log(typeof Gadget.setPrice); // undefined
+		console.log(typeof iphone.isShiny); // undefined
+
+		// Для вызова статического метода относительно экземпляра можно использовать следующее
+		// !!! при этом this в isShiny указывает на объект iphone
+		Gadget.prototype.isShiny = Gadget.isShiny;
+		console.log(iphone.isShiny()); // you bet
+
+		/*
+			Реализация метода, который может вызываться статически и не статически и который будет вести себя
+			по-разному в зависимости от способа вызова.
+		*/
+		// конструктор
+		var Gadget2 = function (price) {
+			this.price = price;
+		}
+
+		// статический метод
+		Gadget2.isShiny = function () {
+			// следующая инструкция выполняется всегда
+			var msg = "you bet";
+
+			if (this instanceof Gadget2) {
+				// Эта ветка вызывается, когда метод вызывается не статически
+				msg += ", it costs $" + this.price + "!";
+			}
+
+			return msg;
+		};
+
+		// обычный метод, добавляемый в прототип
+		Gadget2.prototype.isShiny = function () {
+			return Gadget2.isShiny.call(this);
+		}
+
+		console.log("Gadget2", Gadget2.isShiny());
+		var a = new Gadget2('499.99');
+		console.log(a.isShiny());
+	</script>
+</body>
+
+</html>

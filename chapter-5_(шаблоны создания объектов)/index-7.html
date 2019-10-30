@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			Шаблон открытия модуля - все методы модуля являются частными и в конце определения модуля принимается решение,
+			к каким из них следует открыть доступ
+		*/
+		var MYAPP = MYAPP || {};
+		MYAPP.namespace = function (ns_string) {
+			var parts = ns_string.split('.'),
+				parent = MYAPP,
+				i;
+
+			if (parts[0] === "MYAPP") {
+				parts = parts.slice(1);
+			}
+
+			for (i = 0; i < parts.length; i++) {
+				if (typeof parent[parts[i]] === "undefined") {
+					parent[parts[i]] = {};
+				}
+
+				parent = parent[parts[i]];
+			}
+
+			return parent;
+		}
+
+		MYAPP.namespace("MYAPP.utilities.array");
+		MYAPP.utilities.array = (function () {
+			var array_string = "[object Array]",
+				ops = Object.prototype.toString,
+
+				// частные методы
+				inArray = function (haystack, needle) {
+					for (var i = 0; i < haystack.length; i += 1) {
+						if (haystack[i] === needle) {
+							return true;
+						}
+					}
+					return false;
+				},
+				isArray = function (a) {
+					return ops.call(a) === array_string;
+				};
+
+			// Открытие доступа к некоторым методам
+			return {
+				isArray: isArray,
+				indexOf: inArray
+			};
+		})();
+	</script>
+</body>
+
+</html>

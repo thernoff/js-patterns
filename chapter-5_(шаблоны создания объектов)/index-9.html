@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		var MYAPP = MYAPP || {};
+		MYAPP.namespace = function (ns_string) {
+			var parts = ns_string.split('.'),
+				parent = MYAPP,
+				i;
+
+			if (parts[0] === "MYAPP") {
+				parts = parts.slice(1);
+			}
+
+			for (i = 0; i < parts.length; i++) {
+				if (typeof parent[parts[i]] === "undefined") {
+					parent[parts[i]] = {};
+				}
+
+				parent = parent[parts[i]];
+			}
+
+			return parent;
+		}
+
+		MYAPP.namespace("MYAPP.utilities.Array");
+		/*
+			Импортирование глобальных переменных в модули
+		*/
+		MYAPP.utilities.module = (function (app, global) {
+			// ссылки на объект global и на глобальное пространство имен app теперь будут локальными переменными
+		}(MYAPP, this));
+	</script>
+</body>
+
+</html>

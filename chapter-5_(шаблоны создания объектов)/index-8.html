@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			В предыдущих двух примерах создается объект MYAPP.utilities.array, но иногда гораздо удобнее создавать объекты с помощью конструкторов.
+			Единственное отличие состоит в том, что немедленно вызываемая функция, обертывающая модуль, возвращает функцию, а не объект.
+		*/
+		var MYAPP = MYAPP || {};
+		MYAPP.namespace = function (ns_string) {
+			var parts = ns_string.split('.'),
+				parent = MYAPP,
+				i;
+
+			if (parts[0] === "MYAPP") {
+				parts = parts.slice(1);
+			}
+
+			for (i = 0; i < parts.length; i++) {
+				if (typeof parent[parts[i]] === "undefined") {
+					parent[parts[i]] = {};
+				}
+
+				parent = parent[parts[i]];
+			}
+
+			return parent;
+		}
+
+		MYAPP.namespace("MYAPP.utilities.Array");
+		MYAPP.utilities.Array = (function () {
+			var uobj = MYAPP.utilities.object,
+				ulang = MYAPP.utilities.lang,
+				msg = "example module",
+				// частные методы и свойства
+				Constr;
+
+			// реализация необязательной процедуры инициализации
+
+			// общедоступные методы -- конструктор
+			Constr = function (o) {
+				this.getMessage = function () {
+					return msg;
+				}
+
+				this.elements = this.toArray(o);
+			}
+
+			// общедоступные методы -- прототип
+			Constr.prototype = {
+				constructor: MYAPP.utilities.Array,
+				version: '2.0',
+				toArray: function (obj) {
+					for (var i = 0, a = [], len = obj.length; i < len; i += 1) {
+						a[i] = obj[i];
+					}
+
+					return a;
+				}
+			};
+
+			// вернуть конструктор, создающий новое пространство имен
+			return Constr;
+		})();
+
+		var arr = new MYAPP.utilities.Array(['a', 'b', 'c']);
+		console.log(arr);
+		console.log(arr.getMessage());
+	</script>
+</body>
+
+</html>
