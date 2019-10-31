@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			Объекты-константы
+		*/
+		// конструктор
+		var Widget = function () { };
+
+		// константы (используется соглашение об именовании заглавными символами)
+		Widget.MAX_HEIGHT = 320;
+		Widget.MAX_WIDTH = 480;
+
+		// Ниже приводится реализация универсального объекта constant со следующими методами:
+		// set(name, value) - определение новой контсанты
+		// isDefined(name) - проверка существования константы с именем name
+		// get(name) - получение значения константы
+		// В данной реализации в качестве констант допускается использовать только элементарные значения.
+		var constant = (function () {
+			var constants = {},
+				ownProp = Object.prototype.hasOwnProperty,
+				allowed = {
+					string: 1,
+					number: 1,
+					boolean: 1
+				},
+				prefix = (Math.random() + "_").slice(2);
+
+			return {
+				set: function (name, value) {
+					if (this.isDefined(name)) {
+						return false;
+					}
+
+					if (!ownProp.call(allowed, typeof value)) {
+						return false;
+					}
+
+					constants[prefix + name] = value;
+					return true;
+				},
+
+				isDefined: function (name) {
+					return ownProp.call(constants, prefix + name);
+				},
+
+				get: function (name) {
+					if (this.isDefined(name)) {
+						return constants[prefix + name];
+					}
+					return null;
+				}
+			};
+		}());
+
+		// проверить, определена ли константа
+		console.log(constant.isDefined("maxwidth")); // false
+		// определить
+		console.log(constant.set("maxwidth", 480)); // true
+		// проверить еще раз
+		console.log(constant.isDefined("maxwidth")); // true
+		// попытаться переопределить
+		console.log(constant.set("maxwidth", 320)); // false
+		// значение не изменилось?
+		console.log(constant.get("maxwidth")); // 480
+	</script>
+</body>
+
+</html>

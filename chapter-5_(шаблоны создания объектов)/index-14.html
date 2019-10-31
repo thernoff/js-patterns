@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			Шаблон цепочек
+			myobj.method1("hello").method2().method3("world").method4();
+
+			Для этого можно возращать из каждого метода ссылку this - экземпляр объекта, метод которого вызван
+		*/
+
+		var obj = {
+			value: 1,
+			increment: function () {
+				this.value += 1;
+				return this;
+			},
+			add: function (v) {
+				this.value += v;
+				return this;
+			},
+			shout: function () {
+				console.log(this.value);
+			}
+		};
+
+		obj.increment().add(3).add(2).shout();
+		// !!! НО есть недостаток: данный шаблон сложен в отладке
+	</script>
+</body>
+
+</html>

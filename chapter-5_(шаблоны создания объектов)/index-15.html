@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Шаблоны создания объектов</title>
+</head>
+
+<body>
+	<script>
+		/*
+			Метод method()
+		*/
+
+		if (typeof Function.prototype.method !== "function") {
+			Function.prototype.method = function (name, implementation) {
+				this.prototype[name] = implementation;
+				return this;
+			}
+		}
+
+		var Person = function (name) {
+			this.name = name;
+		}
+			.method('getName', function () {
+				return this.name;
+			})
+			.method('setName', function (name) {
+				this.name = name;
+				return this;
+			});
+
+		var a = new Person('Adam');
+		console.log(a.getName());
+		console.log(a.setName('Eve').getName());
+	</script>
+</body>
+
+</html>
