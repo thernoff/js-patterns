@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Заимствование и связывание
+
+      Объект, на который указывает ссылка this внутри метода, заимствованного с помощью call()/apply() или в результате простого присваивания, 
+      определяется выражением вызова. Но иногда бывает нужно предварительно «зафиксировать» значение ссылки this, то есть связать ее с определенным объектом.
+    */
+
+    var one = {
+      name: "object",
+      say: function (greet) {
+        return greet + ", " + this.name
+      }
+    };
+
+    // проверка
+    console.log(one.say('hi')); // hi, object
+
+    var two = {
+      name: "another object"
+    }
+
+    console.log(one.say.apply(two, ['hello'])); // hello, another object
+
+    /*
+      В последнем случае ссылка this внутри метода say() указывает на объект two, поэтому обращение к свойству this.name возвращает строку
+      «another object». А что произойдет, если сохранить ссылку на функцию в глобальной переменной или передать ее как функцию обратного вызова?
+    */
+
+    // в случае присваивания функции переменной
+    // ссылка 'this' будет указывать на глобальный объект
+    var say = one.say;
+    console.log(say('hoho')); // hoho, 
+
+    // передача в виде функции обратного вызова
+    var yetanother = {
+      name: "Yet another object",
+      method: function (callback) {
+        return callback('Hola')
+      }
+    };
+    console.log(yetanother.method(one.say)); // Hola, 
+
+    /*
+      В обоих случаях ссылка this внутри метода say() указывает на глобальный объект, и программный код действует не так, как ожидалось.
+      Чтобы исправить ошибку (то есть связать объект с методом), можно использовать простую функцию:
+    */
+    function bind(o, m) {
+      return function () {
+        return m.apply(o, [].slice.call(arguments));
+      }
+    }
+
+    var twosay = bind(two, one.say);
+    console.log(twosay('yo')); // yo, another object
+
+    /*
+      Function.prototype.bind()
+      Стандартом ECMA Script 5 предусмотрен дополнительный метод bind() объекта Function.prototype, такой же простой в использовании, 
+      как методы apply() и call(), выполняющий связывание, как показано ниже:
+      
+      var newFunc = obj.someFunc.bind(myobj, 1, 2, 3);
+
+      Давайте посмотрим, как можно реализовать метод Function.prototype.bind() для использования в программах, 
+      выполняющихся в окружениях, не поддерживающих стандарт ES5:
+    */
+
+    if (typeof Function.prototype.bind === "undefined") {
+      Function.prototype.bind = function (thisArg) {
+        var fn = this,
+          slice = Array.prototype.slice,
+          args = slice.call(arguments, 1);
+
+        return function () {
+          return fn.apply(thisArg, args.concat(slice.call(arguments)));
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

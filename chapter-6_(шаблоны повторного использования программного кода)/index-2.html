@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Классический шаблон №2: заимствование конструктора
+      Данный шаблон решает проблему передачи аргументов дочернего конструктора родительскому конструктору,
+      выполняя связывание дочернего объекта со ссылкой this и передавая любые аргументы:
+      function Child(a, b, c, d) {
+        Parent.apply(this, arguments);
+      }
+      При таком подходе наследуются только свойства, добавляемые внутри родительского конструктора. 
+      Но свойства, добавленные в прототип, не наследуются.
+
+      При использовании шаблона заимствования конструктора дочерние объекты получают копии унаследованных членов, 
+      в отличие от классического шаб лона №1, где они получают только ссылки. Отличия этого шаблона демонстрируются в следующем примере:
+    */
+
+    // родительский конструктор
+    function Article() {
+      this.tags = ['js', 'css'];
+    }
+
+    var article = new Article();
+
+    // объект сообщения в блоге наследует свойства объекта article через классический шаблон №1
+    function BlogPost() { }
+
+    BlogPost.prototype = article;
+    var blog = new BlogPost();
+
+    // статическая страница наследует свойства объекта article через шаблон заимствования конструктора
+    function StaticPage() {
+      Article.call(this);
+    }
+
+    var page = new StaticPage('StaticPage Title');
+
+    console.log(article.hasOwnProperty('tags')); // true
+    console.log(blog.hasOwnProperty('tags')); // false
+    console.log(page.hasOwnProperty('tags')); // true
+
+    blog.tags.push('html'); // blog.tags и article.tags ссылаются на один и тот же массив
+    page.tags.push('php'); // page.tags является копией article.page
+    console.log(article.tags.join(', ')); // js, css, html
+
+    // Цепочка прототипов
+    // Конструктор Child() необходимо немного изменить в соответствии с новым шаблоном:
+
+    // родительский конструктор
+    function Parent(name) {
+      this.name = name || 'Adam';
+    }
+
+    // добавление дополнительной функциональности в прототип
+    Parent.prototype.say = function () {
+      return this.name;
+    }
+
+    // дочерний конструктор
+    function Child(name) {
+      Parent.apply(this, arguments);
+    }
+
+    // При использовании этого шаблона объект kid получит собственное свойство name, 
+    // но он не унаследует метод say(), и попытка вызвать его приведет к ошибке.
+    var kid = new Child('Patrick');
+    console.log(kid.name); // Patrick
+    console.log(kid.say); // undefined
+
+
+    /*
+      Множественное наследование при заимствовании конструкторов
+      Шаб лон заимствования конструктора позволяет реализовать множественное 
+      наследование просто за счет заимствования нескольких конструкторов:
+    */
+    function Cat() {
+      this.legs = 4;
+      this.say = function () {
+        return 'meaowww';
+      }
+    }
+
+    function Bird() {
+      this.legs = 2;
+      this.fly = true;
+    }
+
+    function CatWings() {
+      Cat.apply(this);
+      Bird.apply(this);
+    }
+
+    var jane = new CatWings();
+    console.dir(jane);
+  </script>
+</body>
+
+</html>

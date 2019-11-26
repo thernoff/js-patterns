@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Свойство constructor редко используется на практике, но оно может пригодиться для проведения интроспекции объектов во время выполнения.
+      В это свойство можно записать ссылку на желаемый конструктор, не оказывая влияния на функциональные возможности, потому
+      что это свойство используется исключительно для информирования.
+      Заключительная версия функции реализации шаблона классического наследования будет выглядеть так:
+
+      function inherit(C, P) {
+        var F = function() {};
+
+        // У каждой функции по умолчанию уже есть свойство "prototype".
+        // По умолчанию "prototype" – объект с единственным свойством constructor, которое ссылается на функцию-конструктор.
+        F.prototype = P.prototype;
+        // При создании нового объекта с помощью new F(), данному объекту будет задано свойство [[Prototype]], которое будет равно свойству prototype функции F.
+        // получается, что у функции C прототипом является объект, созданный при помощи функции конструктора F, у которого в свойстве prototype находится
+        // прототип функции F, который в свою очередь является ссылкой на прототип функции P.
+        C.prototype = new F();
+        C.uber = P.prototype;
+        C.prototype.constructor = C;
+      }
+
+      Одно из очевидных усовершенствований этого шаблона заключается в том, чтобы избавиться от необходимости создавать временный 
+      (промежуточный) конструктор всякий раз, когда потребуется организовать наследование. Вполне достаточно создать его однажды и 
+      просто изменять его свойство prototype. Для этой цели можно использовать немедленно вызываемую функцию и сохранять промежуточную функцию в замыкании:
+    */
+    var inherit = (function () {
+      var F = function () { };
+      return function (C, P) {
+        F.prototype = P.prototype;
+        C.prototype = new F();
+        C.uber = P.prototype;
+        C.prototype.constructor = C;
+
+        console.log(F.prototype === P.prototype); // true
+        console.log(C.prototype === P.prototype); // false
+        console.log(C.prototype.__proto__ === P.prototype); // true
+      }
+    }());
+
+    function Parent(name) {
+      this.name = name || 'Adam';
+    }
+
+    Parent.prototype.say = function () {
+      return this.name;
+    }
+
+    function Child(name) { }
+
+    inherit(Child, Parent);
+
+
+  </script>
+</body>
+
+</html>

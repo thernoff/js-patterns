@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Наследование копированием свойств
+      В этом шаблоне один объект получает доступ к функциональности другого объекта за счет простого копирования свойств. 
+      Ниже приводится пример реализации функции extend(), осуществляющей этот шаблон.
+    */
+    function extend(parent, child = {}) {
+      var i;
+      for (i in parent) {
+        if (parent.hasOwnProperty(i)) {
+          child[i] = parent[i];
+        }
+      }
+
+      return child;
+    }
+
+    var dad = { name: "Adam" };
+    var kid = extend(dad);
+    console.log(kid.name);
+
+    /*
+      Данная реализация выполняет так называемое «поверхностное копирование» свойств объекта. Чтобы выполнить полное копирование, 
+      необходимо проверить, является ли копируемое свойство объектом или массивом, и если это так, следует рекурсивно обойти все вложенные
+      свойства и также скопировать их.
+
+      Поверхностное копирование является наиболее предпочтительным для методов (функции также являются объектами и передаются по ссылке), 
+      но может приводить к неприятным сюрпризам при наличии свойств, являющихся объектами или массивами. Например:
+    */
+    var dad2 = {
+      counts: [1, 2, 3],
+      reads: { paper: true }
+    };
+
+    var kid2 = extend(dad2);
+    kid2.counts.push(4);
+    console.log(dad2.counts.toString()); // 1,2,3,4
+    console.log(dad2.reads === kid2.reads); // true
+
+    /*
+      Теперь изменим функцию extend() так, чтобы она выполняла полное копирование. Для этого необходимо проверить, является ли свойство
+      объектом, и если это так, рекурсивно скопировать его свойства. Кроме того, необходимо проверить, является ли свойство истинным объектом или массивом.
+    */
+
+    function extendDeep(parent, child) {
+      var i,
+        toStr = Object.prototype.toString,
+        astr = "[object Array]";
+
+      child = child || {};
+
+      for (i in parent) {
+        if (parent.hasOwnProperty(i)) {
+          if (typeof parent[i] === "object") {
+            child[i] = (toStr.call(parent[i]) === astr) ? [] : {};
+            extendDeep(parent[i], child[i]);
+          } else {
+            child[i] = parent[i];
+          }
+        }
+      }
+
+      return child;
+    }
+
+    var dad3 = {
+      counts: [1, 2, 3],
+      reads: { paper: true },
+      say: function () {
+        console.log('hello');
+      }
+    };
+
+    var kid3 = extendDeep(dad2);
+    kid3.counts.push(4);
+    console.log(dad3.counts.toString()); // 1,2,3
+    console.log(kid3.counts.toString()); // 1,2,3,4
+
+    console.log(dad3.reads === kid3.reads); // false
+    kid3.reads.paper = false;
+    console.log(dad3.reads.paper); // true
+
+    // Но методы при этом не копируются
+    dad3.say(); // hello
+    // kid3.say(); // Uncaught TypeError: kid3.say is not a function
+  </script>
+</body>
+
+</html>

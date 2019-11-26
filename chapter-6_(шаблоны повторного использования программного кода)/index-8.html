@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Наследование через прототип
+
+      Представить такой тип наследования можно так: имеется некоторый объект, который можно было бы использовать повторно, 
+      и вам требуется создать второй объект, использующий функциональные возможности первого объекта.
+    */
+
+    function object(o) {
+      function F() { }
+      F.prototype = o;
+      return new F();
+    }
+
+    // объект, который наследуется
+    var parent = {
+      name: "Papa"
+    };
+
+    // новый объект
+    var child = object(parent);
+
+    console.log(child.name); // Papa
+
+    /*
+      С тем же успехом создание родительского объекта может производиться с помощью функции-конструктора.
+      Однако учтите, что в последнем случае унаследованы будут не только свойства прототипа конструктора, но и «собственные» свойства объекта:
+    */
+
+    // родительский конструктор
+    function Person() {
+      // "собственное" свойство
+      this.name = "Adam";
+    }
+
+    // свойство, добавляемое в прототип
+    Person.prototype.getName = function () {
+      return this.name;
+    }
+
+    // создать новый объект типа Person
+    var papa = new Person();
+    console.log(papa.getName()); // Adam
+
+    // наследник
+    var kid = object(papa);
+    // убедиться, что было унаследовано не только свойство прототипа, но и собственное свойство
+    console.log(kid.getName()); // Adam
+
+    /*
+      Другая разновидность этого шаблона предполагает возможность наследования только объекта прототипа существующего конструктора. 
+      Не забывайте, что объекты наследуют объекты независимо от того, каким способом создаются родительские объекты. 
+      Ниже приводится немного измененная реализация предыдущего примера:
+    */
+
+    // родительский конструктор
+    function Person2() {
+      // "собственное" свойство
+      this.name = "Adam";
+    }
+
+    // свойство, добавляемое в прототип
+    Person2.prototype.getName = function () {
+      return this.name;
+    }
+
+    // наследник
+    // свойство name не неследуется
+    var kid2 = object(Person.prototype);
+
+    console.log(typeof kid2.getName); // function
+    console.log(typeof kid2.name); // undefined
+
+    /*
+      Дополнения в стандарте ECMAScript 5
+
+      В стандарте ECMAScript 5 шаблон наследования через прототип стал официальной частью языка. Этот шаблон реализован в виде метода
+      Object.create(). Другими словами, вам не потребуется создавать собственную функцию, похожую на object(); она уже будет встроена в язык:
+    */
+
+    parent.__proto__.getName = function () {
+      return this.name;
+    }
+
+    var child = Object.create(parent);
+    console.log(child.getName()); // Papa
+
+    /*
+      Метод Object.create() принимает дополнительный параметр – объект.
+      Свойства этого объекта будут добавлены во вновь созданный дочерний объект как собственные свойства.
+    */
+    // мы получем объект child2, у которого прототипом является объект parent, но с добавленными свойствами
+    var child2 = Object.create(parent, {
+      age: { value: 22 },
+      getAge: {
+        value: function () {
+          return this.age;
+        }
+      }
+    });
+
+    console.log(child2.getName()); // Papa
+    console.log(child2.getAge()); // 22
+  </script>
+</body>
+
+</html>

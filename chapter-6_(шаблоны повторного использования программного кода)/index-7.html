@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Функция klass()
+
+      Не углубляясь в подробности, рассмотрим пример реализации имитации классов в языке Java Script. Во-первых, посмотрим,
+      как эта имитация будет выглядеть с точки зрения клиента:
+
+      var Man = klass(null, {
+        __construct: function (what) {
+          console.log("Man's constructor");
+          this.name = what;
+        },
+        getName: function () {
+          return this.name;
+        }
+      });
+    */
+
+    // Пример реализации функции klass
+    // на самом деле это по сути аналог функции inherit из предыдущих разделов
+    var klass = function (Parent, props) {
+      var Child, F, i;
+
+      // 1. Новый конструктор
+      Child = function () {
+        // следующие два условия сработают только при непосредственном вызове функции klass
+
+        // сначала вызываем конструктор родителя если он у него есть
+        // если есть ссылка на прототип родителя и у него есть свойство (в данном случае метод) __construct, то вызываем его
+        if (Child.uber && Child.uber.hasOwnProperty("__construct")) {
+          console.log("Child.uber имеет свойство __construct");
+          Child.uber.__construct.apply(this, arguments);
+        }
+
+        // затем вызываем конструктор самого класса
+        // если Child.prototype содержит свойство (в данном случае метод) __construct, то вызываем его
+        // нужно понимать, что данный метод должен содержаться в объекте props. Все свойства и методы данного объекта будут ниже занесены в прототип Child
+        if (Child.prototype.hasOwnProperty("__construct")) {
+          console.log("Child.prototype имеет свойство __construct");
+          Child.prototype.__construct.apply(this, arguments);
+        }
+      };
+
+      // 2. Наследование
+      Parent = Parent || Object;
+      F = function () { }
+      // если Parent == null, то F.prototype будет ссылаться на Object.prototype
+      // если Parent не null, то F.prototype будет ссылаться на Parent.prototype
+      F.prototype = Parent.prototype;
+      console.log(F.prototype);
+      // если Parent == null, то Child.prototype это объект со свойством __proto__, которое ссылается на F.prototype, а это есть Object.prototype
+      // в противном случае, Child.prototype - объект со свойством __proto__, которое ссылается на Parent.prototype
+      Child.prototype = new F();
+      console.log(Child.prototype);
+      // запоминаем ссылку на родительский прототип
+      Child.uber = Parent.prototype;
+      Child.prototype.constructor = Child;
+
+      // 3. Добавить реализацию методов в прототип создаваемого объекта
+      // в props находится объект, который может содержать различныем методы и свойсва, и они перейдут создаваемому объекту
+      for (i in props) {
+        if (props.hasOwnProperty(i)) {
+          Child.prototype[i] = props[i];
+        }
+      }
+
+      // вернуть сформированный класс
+      return Child;
+    }
+
+    // по сути, когда мы вызываем функцию klass, на самом деле вызывается функция Child
+    var Man = klass(null, {
+      // функция __construct будет записана в прототип функции Man и сработает автоматически при ее вызове
+      __construct: function (what) {
+        console.log("Man's constructor");
+        console.log("what = ", what);
+        this.name = what;
+      },
+      getName: function () {
+        return this.name;
+      }
+    });
+
+    //var john = new Man('John');
+    //console.log(john.getName());
+
+    var SuperMan = klass(Man, {
+      __construct: function (what) {
+        console.log("SuperMan's constructor");
+        console.log("what = ", what);
+      },
+      getName: function () {
+        var name = SuperMan.uber.getName.call(this);
+      }
+    });
+
+    //var clark = new SuperMan("Clark Kent");
+    //clark.getName(); // “I am Clark Kent”
+
+  </script>
+</body>
+
+</html>

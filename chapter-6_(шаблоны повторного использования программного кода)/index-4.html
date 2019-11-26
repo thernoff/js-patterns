@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Классический шаблон №4: совместное использование прототипа
+      В отличие от предыдущего шаблона классического наследования, в котором требуется выполнить два вызова родительского конструктора,
+      следующий шаблон вообще не предусматривает вызов родительского конструктора.
+
+      При таком способе наследования доступ к повторно используемым членам обеспечивается прототипом, а не ссылкой this. То есть все, что
+      должно наследоваться дочерними объектами, должно находиться в родительском прототипе.
+
+      function inherit(C, P) {
+        C.prototype = P.prototype;
+      }
+
+      Достоинства: скорость поиска
+      Недостатки: если один из объектов в цепочке изменит свой прототип, то это скажется на всех его родительских объектах,
+      расположенных выше в цепочке наследования. Также дочерние объекты не будут иметь нужных свойств родителя.
+    */
+
+    function inherit(C, P) {
+      C.prototype = P.prototype;
+    }
+
+    function Parent(name) {
+      this.name = name || 'Adam';
+    }
+
+    Parent.prototype.say = function () {
+      return this.name;
+    }
+
+    function Child(name) { }
+
+    inherit(Child, Parent);
+
+    var kid = new Child("Mike");
+    console.log(kid.say()); // undefined
+
+    var parent = new Parent();
+    console.log(parent.say()); // Adam
+  </script>
+</body>
+
+</html>

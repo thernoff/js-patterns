@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Классический шаблон №3: заимствование и установка прототипа
+      При объединении двух предыдущих шаблонов необходимо сначала заимствовать конструктор,
+      а затем сохранить в свойстве prototype дочернего объекта ссылку на новый экземпляр
+      конструктора:
+
+      function Child(a, c, b, d) {
+        Parent.apply(this, arguments);
+      }
+      Child.prototype = new Parent();
+    */
+
+    // родительский конструктор
+    function Parent(name) {
+      this.name = name || 'Adam';
+    }
+
+    // добавление дополнительной функциональности в прототип
+    Parent.prototype.say = function () {
+      return this.name;
+    }
+
+    // дочерний конструктор
+    function Child(name) {
+      Parent.apply(this, arguments);
+    }
+
+    Child.prototype = new Parent();
+
+    /*
+      В отличие от предыдущего шаблона, теперь дочерний объект наследует метод say(). 
+      Можно также заметить, что свойство name было унаследовано дважды, и после удаления собственной копии дочерний объект
+      получает доступ к другому свойству, унаследованному по цепочке прототипов.
+    */
+    var kid = new Child('Patrick');
+    console.log(kid.name); // Patrick
+    console.log(kid.say()); // Patrick
+    delete kid.name;
+    console.log(kid.say()); // Adam
+  </script>
+</body>
+
+</html>

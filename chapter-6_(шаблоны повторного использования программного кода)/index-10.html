@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны повторного использования программного кода</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Смешивание
+
+      Давайте рассмотрим шаблон смешивания, взяв за основу идею наследования копированием свойств и развив ее еще дальше. 
+      Вместо копирования одного объекта можно предусмотреть возможность копирования произвольного количества объектов, смешав их свойства в новом объекте.
+    */
+
+    function mix() {
+      var arg, prop, child = {};
+      for (arg = 0; arg < arguments.length; arg++) {
+        for (prop in arguments[arg]) {
+          if (arguments[arg].hasOwnProperty(prop)) {
+            child[prop] = arguments[arg][prop];
+          }
+        }
+      }
+
+      return child;
+    }
+
+    var cake = mix(
+      { eggs: 2, large: true },
+      { butter: 1, salted: true },
+      { flour: "3 cups" },
+      { sugar: "sure!" }
+    );
+
+    console.dir(cake);
+  </script>
+</body>
+
+</html>
