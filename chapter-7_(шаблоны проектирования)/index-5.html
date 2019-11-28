@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны проектирования</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Встроенная фабрика объектов
+      В качестве примера «природной фабрики» рассмотрим встроенный глобальный конструктор Object(). Он также ведет себя, как фабрика,
+      потому что создает различные объекты исходя из входных данных. Если передать конструктору простое число, он создаст объект, задействовав
+      конструктор Number(). То же справедливо в отношении строк и логических значений.
+      При любых других значениях, включая отсутствие входных значений, будут создаваться обычные объекты.
+
+       Обратите внимание, что конструктор Object() может вызываться как с оператором new, так и без него:
+    */
+    var o = new Object(),
+      n = new Object(1),
+      s = Object('1'),
+      b = Object(true);
+
+    // проверка
+    console.log(o.constructor === Object); // true
+    console.log(n.constructor === Number); // true
+    console.log(s.constructor === String); // true
+    console.log(b.constructor === Boolean); // true
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны проектирования</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Чтобы решить проблему сохранения свойства прототипа и ссылку на конструктор (см. предыдущий пример),
+      можно внести ряд улучшений.
+    */
+
+    function UniverseClosure() {
+      // сохраненный экземпляр
+      var instance;
+      // переопределить конструктор
+      UniverseClosure = function UniverseClosure() {
+        return instance;
+      }
+
+      // перенести свойства прототипа
+      UniverseClosure.prototype = this;
+
+      // создать экземпляр
+      instance = new UniverseClosure();
+
+      // переустановить указатель на конструктор
+      instance.constructor = UniverseClosure;
+
+      // добавить остальную функциональность
+      instance.start_time = 0;
+      instance.bang = "Big";
+
+      return instance;
+    }
+
+    UniverseClosure.prototype.nothing = true;
+    var uniC = new UniverseClosure();
+    UniverseClosure.prototype.everything = true;
+    var uniC2 = new UniverseClosure();
+    console.log(uniC === uniC2);
+    // проверка
+    console.log(uniC.nothing); // true
+    console.log(uniC2.nothing); // true
+    console.log(uniC.everything); // true
+    console.log(uniC2.everything); // true
+
+    console.log(uniC.constructor.name); // UniverseClosure
+    console.log(uniC.constructor === UniverseClosure); // true
+  </script>
+</body>
+
+</html>
