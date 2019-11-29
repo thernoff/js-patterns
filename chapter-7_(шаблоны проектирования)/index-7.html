@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Шаблоны проектирования</title>
+</head>
+
+<body>
+  <script>
+    /*
+      Декоратор
+      При использовании шаблона декораторов дополнительную функциональность можно добавлять к объекту динамически во время выполнения.
+
+      Один из способов реализации шаб лона декораторов заключается в создании для каждого декоратора объекта, содержащего методы, которые
+      должны быть переопределены. Каждый декоратор фактически наследует объект, расширенный предыдущим декоратором. Каждый декорированный метод вызывает одноименный метод 
+      объекта uber (унаследованного объекта) и, получив от него некоторое значение, выполняет необходимые дополнительные операции.
+    */
+    function Sale(price = 100) {
+      this.price = price;
+    }
+
+    Sale.prototype.getPrice = function () {
+      return this.price;
+    }
+
+    Sale.prototype.decorate = function (decorator) {
+      var F = function () { },
+        // this.constructor - это в данном случае сама функция Sale, у нее задано свойство decorators (см. ниже)
+        overrides = this.constructor.decorators[decorator],
+        i, newobj;
+
+      F.prototype = this;
+      newobj = new F();
+      newobj.uber = F.prototype;
+
+      for (i in overrides) {
+        if (overrides.hasOwnProperty(i)) {
+          newobj[i] = overrides[i];
+        }
+      }
+
+      return newobj;
+    }
+
+    // Все объекты-декораторы реализуются как свойства конструктора:
+    Sale.decorators = {};
+
+    Sale.decorators.fedtax = {
+      getPrice: function () {
+        var price = this.uber.getPrice();
+        price += price * 5 / 100;
+        return price;
+      }
+    }
+
+    Sale.decorators.quebec = {
+      getPrice: function () {
+        var price = this.uber.getPrice();
+        price += price * 7.5 / 100;
+        return price;
+      }
+    }
+
+    Sale.decorators.money = {
+      getPrice: function () {
+        return "$" + this.uber.getPrice().toFixed(2);
+      }
+    }
+
+    Sale.decorators.cdn = {
+      getPrice: function () {
+        return "CDN$" + this.uber.getPrice().toFixed(2);
+      }
+    }
+
+    // проверка
+    var sale = new Sale(100);
+    console.log(sale.getPrice());
+    sale = sale.decorate('fedtax');
+    console.log(sale.getPrice());
+    sale = sale.decorate('quebec');
+    console.log(sale.getPrice());
+    sale = sale.decorate('money');
+    console.log(sale.getPrice());
+  </script>
+</body>
+
+</html>
